@@ -3,8 +3,8 @@ package message
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/silenceper/wechat/context"
-	"github.com/silenceper/wechat/util"
+	"github.com/luispater/wechat/context"
+	"github.com/luispater/wechat/util"
 )
 
 const (

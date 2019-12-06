@@ -2,7 +2,7 @@ package pay
 
 import (
 	"fmt"
-	"github.com/silenceper/wechat/util"
+	"github.com/luispater/wechat/util"
 	"sort"
 )
 
