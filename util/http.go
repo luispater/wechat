@@ -7,17 +7,52 @@ import (
 	"encoding/pem"
 	"encoding/xml"
 	"fmt"
+	"golang.org/x/net/proxy"
 	"io"
 	"io/ioutil"
 	"log"
 	"mime/multipart"
+	"net"
 	"net/http"
 	"os"
+	"time"
 
 	"golang.org/x/crypto/pkcs12"
 )
 
-//HTTPGet get 请求
+func HTTPGetSocks5(uri, socks5addr, socks5user, socks5password string) ([]byte, error) {
+	var client *http.Client
+	if socks5addr != "" {
+		dialer, _ := proxy.SOCKS5("tcp", socks5addr,
+			&proxy.Auth{User: socks5user, Password: socks5password},
+			&net.Dialer{
+				Timeout:   30 * time.Second,
+				KeepAlive: 30 * time.Second,
+			},
+		)
+
+		transport := &http.Transport{
+			Dial:                dialer.Dial,
+			TLSHandshakeTimeout: 10 * time.Second,
+		}
+
+		client = &http.Client{Transport: transport}
+	} else {
+		client = &http.Client{}
+	}
+	response, err := client.Get(uri)
+	if err != nil {
+		return nil, err
+	}
+
+	defer response.Body.Close()
+	if response.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("http get error : uri=%v , statusCode=%v", uri, response.StatusCode)
+	}
+	return ioutil.ReadAll(response.Body)
+}
+
+// HTTPGet get 请求
 func HTTPGet(uri string) ([]byte, error) {
 	response, err := http.Get(uri)
 	if err != nil {
@@ -31,7 +66,7 @@ func HTTPGet(uri string) ([]byte, error) {
 	return ioutil.ReadAll(response.Body)
 }
 
-//HTTPPost post 请求
+// HTTPPost post 请求
 func HTTPPost(uri string, data string) ([]byte, error) {
 	body := bytes.NewBuffer([]byte(data))
 	response, err := http.Post(uri, "", body)
@@ -46,7 +81,7 @@ func HTTPPost(uri string, data string) ([]byte, error) {
 	return ioutil.ReadAll(response.Body)
 }
 
-//PostJSON post json 数据请求
+// PostJSON post json 数据请求
 func PostJSON(uri string, obj interface{}) ([]byte, error) {
 	jsonData, err := json.Marshal(obj)
 	if err != nil {
@@ -94,7 +129,7 @@ func PostJSONWithRespContentType(uri string, obj interface{}) ([]byte, string, e
 	return responseData, contentType, err
 }
 
-//PostFile 上传文件
+// PostFile 上传文件
 func PostFile(fieldname, filename, uri string) ([]byte, error) {
 	fields := []MultipartFormField{
 		{
@@ -106,7 +141,7 @@ func PostFile(fieldname, filename, uri string) ([]byte, error) {
 	return PostMultipartForm(fields, uri)
 }
 
-//MultipartFormField 保存文件或其他字段信息
+// MultipartFormField 保存文件或其他字段信息
 type MultipartFormField struct {
 	IsFile    bool
 	Fieldname string
@@ -114,7 +149,7 @@ type MultipartFormField struct {
 	Filename  string
 }
 
-//PostMultipartForm 上传文件或其他多个字段
+// PostMultipartForm 上传文件或其他多个字段
 func PostMultipartForm(fields []MultipartFormField, uri string) (respBody []byte, err error) {
 	bodyBuf := &bytes.Buffer{}
 	bodyWriter := multipart.NewWriter(bodyBuf)
@@ -166,7 +201,7 @@ func PostMultipartForm(fields []MultipartFormField, uri string) (respBody []byte
 	return
 }
 
-//PostXML perform a HTTP/POST request with XML body
+// PostXML perform a HTTP/POST request with XML body
 func PostXML(uri string, obj interface{}) ([]byte, error) {
 	xmlData, err := xml.Marshal(obj)
 	if err != nil {
@@ -186,7 +221,7 @@ func PostXML(uri string, obj interface{}) ([]byte, error) {
 	return ioutil.ReadAll(response.Body)
 }
 
-//httpWithTLS CA证书
+// httpWithTLS CA证书
 func httpWithTLS(rootCa, key string) (*http.Client, error) {
 	var client *http.Client
 	certData, err := ioutil.ReadFile(rootCa)
@@ -205,7 +240,7 @@ func httpWithTLS(rootCa, key string) (*http.Client, error) {
 	return client, nil
 }
 
-//pkcs12ToPem 将Pkcs12转成Pem
+// pkcs12ToPem 将Pkcs12转成Pem
 func pkcs12ToPem(p12 []byte, password string) tls.Certificate {
 	blocks, err := pkcs12.ToPEM(p12, password)
 	defer func() {
@@ -227,7 +262,7 @@ func pkcs12ToPem(p12 []byte, password string) tls.Certificate {
 	return cert
 }
 
-//PostXMLWithTLS perform a HTTP/POST request with XML body and TLS
+// PostXMLWithTLS perform a HTTP/POST request with XML body and TLS
 func PostXMLWithTLS(uri string, obj interface{}, ca, key string) ([]byte, error) {
 	xmlData, err := xml.Marshal(obj)
 	if err != nil {

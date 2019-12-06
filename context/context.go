@@ -9,26 +9,29 @@ import (
 
 // Context struct
 type Context struct {
-	AppID          string
-	AppSecret      string
-	Token          string
-	EncodingAESKey string
-	PayMchID       string
-	PayNotifyURL   string
-	PayKey         string
+	AppID           string
+	AppSecret       string
+	Token           string
+	EncodingAESKey  string
+	PayMchID        string
+	PayNotifyURL    string
+	PayKey          string
+	Socks5ProxyAddr string
+	Socks5ProxyUser string
+	Socks5ProxyPswd string
 
 	Cache cache.Cache
 
 	Writer  http.ResponseWriter
 	Request *http.Request
 
-	//accessTokenLock 读写锁 同一个AppID一个
+	// accessTokenLock 读写锁 同一个AppID一个
 	accessTokenLock *sync.RWMutex
 
-	//jsAPITicket 读写锁 同一个AppID一个
+	// jsAPITicket 读写锁 同一个AppID一个
 	jsAPITicketLock *sync.RWMutex
 
-	//accessTokenFunc 自定义获取 access token 的方法
+	// accessTokenFunc 自定义获取 access token 的方法
 	accessTokenFunc GetAccessTokenFunc
 }
 

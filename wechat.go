@@ -27,14 +27,17 @@ type Wechat struct {
 
 // Config for user
 type Config struct {
-	AppID          string
-	AppSecret      string
-	Token          string
-	EncodingAESKey string
-	PayMchID       string //支付 - 商户 ID
-	PayNotifyURL   string //支付 - 接受微信支付结果通知的接口地址
-	PayKey         string //支付 - 商户后台设置的支付 key
-	Cache          cache.Cache
+	AppID           string
+	AppSecret       string
+	Token           string
+	EncodingAESKey  string
+	PayMchID        string // 支付 - 商户 ID
+	PayNotifyURL    string // 支付 - 接受微信支付结果通知的接口地址
+	PayKey          string // 支付 - 商户后台设置的支付 key
+	Cache           cache.Cache
+	Socks5ProxyAddr string
+	Socks5ProxyUser string
+	Socks5ProxyPswd string
 }
 
 // NewWechat init
@@ -53,6 +56,10 @@ func copyConfigToContext(cfg *Config, context *context.Context) {
 	context.PayKey = cfg.PayKey
 	context.PayNotifyURL = cfg.PayNotifyURL
 	context.Cache = cfg.Cache
+	context.Socks5ProxyAddr = cfg.Socks5ProxyAddr
+	context.Socks5ProxyUser = cfg.Socks5ProxyUser
+	context.Socks5ProxyPswd = cfg.Socks5ProxyPswd
+
 	context.SetAccessTokenLock(new(sync.RWMutex))
 	context.SetJsAPITicketLock(new(sync.RWMutex))
 }
@@ -64,7 +71,7 @@ func (wc *Wechat) GetServer(req *http.Request, writer http.ResponseWriter) *serv
 	return server.NewServer(wc.Context)
 }
 
-//GetAccessToken 获取access_token
+// GetAccessToken 获取access_token
 func (wc *Wechat) GetAccessToken() (string, error) {
 	return wc.Context.GetAccessToken()
 }
