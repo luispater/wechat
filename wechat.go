@@ -35,9 +35,9 @@ type Config struct {
 	PayNotifyURL    string // 支付 - 接受微信支付结果通知的接口地址
 	PayKey          string // 支付 - 商户后台设置的支付 key
 	Cache           cache.Cache
-	Socks5ProxyAddr string
-	Socks5ProxyUser string
-	Socks5ProxyPswd string
+	Socks5ProxyAddr string // Socks5 代理地址
+	Socks5ProxyUser string // Socks5 代理用户名
+	Socks5ProxyPswd string // Socks5 代理密码
 }
 
 // NewWechat init
