@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/luispater/wechat/context"
-	"github.com/luispater/wechat/util"
+	"github.com/luispater/wechat/v2/context"
+	"github.com/luispater/wechat/v2/util"
 )
 
 const (

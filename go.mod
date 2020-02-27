@@ -1,4 +1,4 @@
-module github.com/luispater/wechat
+module github.com/luispater/wechat/v2
 
 go 1.13
 

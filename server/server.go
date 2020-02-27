@@ -9,9 +9,9 @@ import (
 	"runtime/debug"
 	"strconv"
 
-	"github.com/luispater/wechat/context"
-	"github.com/luispater/wechat/message"
-	"github.com/luispater/wechat/util"
+	"github.com/luispater/wechat/v2/context"
+	"github.com/luispater/wechat/v2/message"
+	"github.com/luispater/wechat/v2/util"
 )
 
 //Server struct

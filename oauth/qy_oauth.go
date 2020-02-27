@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/luispater/wechat/util"
+	"github.com/luispater/wechat/v2/util"
 )
 
 var (

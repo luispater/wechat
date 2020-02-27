@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/luispater/wechat/util"
+	"github.com/luispater/wechat/v2/util"
 )
 
 // ReqBind 设备绑定解绑共通实体
